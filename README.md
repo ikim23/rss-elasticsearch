@@ -170,13 +170,15 @@ xpack.notification.email.account:
             user: myusername@gmail.com
             password: mypassword
 ```
+See [Gmail setup](https://www.elastic.co/guide/en/x-pack/5.1/actions-email.html#gmail) in official documentation. Don't forget to allow access to your Gmail account for less secure applications.
+
 Restast Elasticsearch to accept configuration changes :
 ```
 sudo systemctl restart elasticsearch.service
 ```
 Create watcher for RSS feed:
 ```
-curl -XPUT "http://192.168.1.7:9200/_xpack/watcher/watch/match_in_bazos" -d'
+curl -XPUT "http://localhost:9200/_xpack/watcher/watch/match_in_bazos" -d'
 {
    "trigger": {
       "schedule": {
