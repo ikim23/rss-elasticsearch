@@ -1,10 +1,5 @@
-# RSS feed watcher using Elasticsearch
-
-### Contents:
-- [Install Java 8](#install-java-8)
-- [Install Elasticsearch](#install-elasticsearch)
-- [Install Logstash](#install-logstash)
-- [Install X-Pack](#install-x-pack)
+# Watch RSS feed using Elasticsearch
+This article show you how to setup Elasticsearch to search through RSS feed and send e-mail notification on match. This can be useful for example in second hand forums/sites. (Example uses site: [Bazos.sk](https://www.bazos.sk/))
 
 ### Requirements:
 - Ubuntu Server 16.04.1 LTS
@@ -13,6 +8,11 @@
 - Logstash 5.1.1
 - X-Pack 5.1.1
 
+### Contents:
+- [Install Java 8](#install-java-8)
+- [Install Elasticsearch](#install-elasticsearch)
+- [Install Logstash](#install-logstash)
+- [Install X-Pack](#install-x-pack)
 
 ## Install Java 8
 ```
@@ -52,7 +52,6 @@ curl -XPUT "http://localhost:9200/bazos" -d'
 {
    "settings": {
       "index": {
-         "refresh_interval": "60s",
          "number_of_shards": 1,
          "number_of_replicas": 0
       },
@@ -111,7 +110,7 @@ Insert lines to logstash.conf:
 input {
 	rss {
 		interval => 300
-		url => "https://www.bazos.sk/rss.php"
+		url => "https://www.bazos.sk/rss.php?rub=PC"
 	}
 }
 
@@ -138,10 +137,16 @@ output {
 	}
 }
 ```
+This configuration downloads and index new data to Elasticsearch every 5 minutes.
+
 Start Logstash on system boot:
 ```
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable logstash.service
+```
+Start Logstash:
+```
+sudo systemctl start logstash.service
 ```
 
 ## Install X-Pack
@@ -164,6 +169,10 @@ xpack.notification.email.account:
             port: 587
             user: myusername@gmail.com
             password: mypassword
+```
+Restast Elasticsearch to accept configuration changes :
+```
+sudo systemctl restart elasticsearch.service
 ```
 Create watcher for RSS feed:
 ```
@@ -219,3 +228,4 @@ curl -XPUT "http://192.168.1.7:9200/_xpack/watcher/watch/match_in_bazos" -d'
    }
 }'
 ```
+This watcher runs query every 5 minutes and sends email on match.
