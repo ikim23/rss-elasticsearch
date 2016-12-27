@@ -103,7 +103,7 @@ sudo /usr/share/logstash/bin/logstash-plugin install logstash-input-rss
 ```
 Create Logstash configuration file:
 ```
-sudo nano /etc/logstash//conf.d/logstash.conf
+sudo nano /etc/logstash/conf.d/logstash.conf
 ```
 Insert lines to logstash.conf:
 ```
@@ -228,4 +228,4 @@ curl -XPUT "http://192.168.1.7:9200/_xpack/watcher/watch/match_in_bazos" -d'
    }
 }'
 ```
-This watcher runs query every 5 minutes and sends email on match.
+This watcher runs query every 5 minutes and sends email on match (searches for "intel i7" in title and message of feed).
